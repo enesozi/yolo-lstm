@@ -14,7 +14,7 @@ if __name__ == '__main__':
         "output_path", help='Output directory for image.txt files')
     args = parser.parse_args()
 
-    with open(json_file) as f:
+    with open(args.path) as f:
         data = json.load(f)
         annotations = data['annotations']
         width = 1920
@@ -34,6 +34,6 @@ if __name__ == '__main__':
             w_rel, h_rel = (bbox_width / width, bbox_height / height)
             converted_results.append(
                 (cat_id, x_rel, y_rel, w_rel, h_rel))
-        with open(os.path.join(args.output_path, ann['image_id'].split('.')[0] + '.txt'), 'w+') as fp:
-            fp.write('\n'.join('%d %.6f %.6f %.6f %.6f' %
-                               res for res in converted_results))
+            with open(os.path.join(args.output_path, ann['image_id'].split('.')[0] + '.txt'), 'w+') as fp:
+                fp.write('\n'.join('%d %.6f %.6f %.6f %.6f' %
+                                   res for res in converted_results))
