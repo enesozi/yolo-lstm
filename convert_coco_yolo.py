@@ -5,6 +5,7 @@ import glob
 import os
 import sys
 import json
+from natsort import natsorted
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -22,8 +23,8 @@ if __name__ == '__main__':
         width = 1920
         height = 1208
         converted_results = []
-        image_ids = len(data['images']) - 1
-        for ann in []:
+        image_ids = set()
+        for ann in annotations:
             cat_id = int(ann['category_id'])
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
@@ -39,8 +40,9 @@ if __name__ == '__main__':
                 (cat_id, x_rel, y_rel, w_rel, h_rel))
             file_name = "%s_%s.txt" % (
                 args.dataset, ann['image_id'].split('.')[0])
+            image_ids.add(ann['image_id'])
             with open(os.path.join(args.output_path, file_name), 'w+') as fp:
                 fp.write('\n'.join('%d %.6f %.6f %.6f %.6f' %
                                    res for res in converted_results))
-    with open(args.dataset+'.txt','w+') as f:
-       f.write('%d'%image_ids)
+        with open(args.dataset+'.txt','w+') as f:
+            f.write('\n'.join(natsorted(list(image_ids), key=lambda y: y.lower())))

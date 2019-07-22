@@ -1,6 +1,6 @@
 #!/bin/bash
-declare -a train_images=("winter" "thermal" "demo")
-declare -a valid_images=("rescue")
+declare -a train_images=("winter" "thermal")
+declare -a valid_images=("demo")
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
 cfg_file="yolo_v3_spp_lstm.cfg"
@@ -14,35 +14,28 @@ image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
 rm -rf "$image_dir"
 mkdir "$image_dir"
 
-for ds in $train_images
+for ds in "${train_images[@]}";
 do
 echo $ds
 python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
-end=$(cat "${ds}.txt")
-        for value in $( eval echo {0..$end} )
-        do
-                printf "data/lstm/${ds}_frame%05d.jpg\n" $value >> "$train_file";
-                image=$(printf "frame%05d.jpg" $value)
-                # Copy image to the correct directory
-                cp "$HOME/Downloads/${ds}/${image}" "${image_dir}/${ds}_${image}" 2>/dev/null
-        done
-
+	while IFS= read line
+	do
+		printf "data/lstm/${ds}_$line\n" >> "$train_file";
+		cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
+	done <"${ds}.txt"
 done
 
-for ds in $valid_images
+for ds in "${valid_images[@]}";
 do
 echo $ds
 python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
-end=$(cat "${ds}.txt")
-        for value in $( eval echo {0..$end} )
-        do
-                printf "data/lstm/${ds}_frame%04d.jpg\n" $value >> "$valid_file";
-                image=$(printf "frame%05d.jpg" $value)
-                # Copy image to the correct directory
-                cp "$HOME/Downloads/${ds}/${image}" "${image_dir}/${ds}_${image}" 2>/dev/null
-        done
+	while IFS= read line
+	do
+		printf "data/lstm/${ds}_$line\n" >> "$valid_file";
+		cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
+	done <"${ds}.txt"
 
 done
 
@@ -56,3 +49,4 @@ cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
 
 # Download pretrained weight
 wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
+
