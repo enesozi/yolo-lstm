@@ -1,0 +1,5 @@
+classes = 3
+train   = data/lstm_train.txt
+valid   = data/lstm_valid.txt
+names   = data/lstm.names
+backup  = backup/
