@@ -6,7 +6,8 @@ valid_file="lstm_valid.txt"
 cfg_file="yolo_v3_spp_lstm.cfg"
 data_file="lstm.data"
 name_file="lstm.names"
-image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
+#image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
+image_dir="$HOME/Downloads/lstm"
 
 [ -f "$train_file" ] && rm "$train_file"
 [ -f "$valid_file" ] && rm "$valid_file"
@@ -21,7 +22,7 @@ python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
 	while IFS= read line
 	do
-		printf "data/lstm/${ds}_$line\n" >> "$train_file";
+		printf "$HOME/Downloads/lstm/${ds}_$line\n" >> "$train_file";
 		cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
 	done <"${ds}.txt"
 done
@@ -33,7 +34,7 @@ python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
 	while IFS= read line
 	do
-		printf "data/lstm/${ds}_$line\n" >> "$valid_file";
+		printf "$HOME/Downloads/lstm/${ds}_$line\n" >> "$valid_file";
 		cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
 	done <"${ds}.txt"
 
@@ -48,5 +49,5 @@ cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
 cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
 
 # Download pretrained weight
-wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
+#wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
 
