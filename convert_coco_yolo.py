@@ -22,8 +22,8 @@ if __name__ == '__main__':
         annotations = data['annotations']
         width = 1920
         height = 1208
-        converted_results = []
         image_ids = set()
+        anns_converted = {}
         for ann in annotations:
             cat_id = int(ann['category_id'])
             left, top, bbox_width, bbox_height = map(
@@ -36,13 +36,24 @@ if __name__ == '__main__':
             # darknet expects relative values wrt image width&height
             x_rel, y_rel = (x_center / width, y_center / height)
             w_rel, h_rel = (bbox_width / width, bbox_height / height)
-            converted_results.append(
-                (cat_id, x_rel, y_rel, w_rel, h_rel))
+
             file_name = "%s_%s.txt" % (
                 args.dataset, ann['image_id'].split('.')[0])
-            image_ids.add(ann['image_id'])
+            image_id = ann['image_id']
+            image_ids.add(image_id)
+            if image_id not in anns_converted:
+                anns_converted[image_id] = {}
+                anns_converted[image_id]['file'] = file_name
+                anns_converted[image_id]['anns'] = []
+
+            anns_converted[image_id]['anns'].append(
+                (cat_id, x_rel, y_rel, w_rel, h_rel))
+
+        for image_id in anns_converted:
+            file_name = anns_converted[image_id]['file']
+            converted_results = anns_converted[image_id]['anns']
             with open(os.path.join(args.output_path, file_name), 'w+') as fp:
                 fp.write('\n'.join('%d %.6f %.6f %.6f %.6f' %
                                    res for res in converted_results))
-        with open(args.dataset+'.txt','w+') as f:
+        with open(args.dataset + '.txt', 'w+') as f:
             f.write('\n'.join(natsorted(list(image_ids), key=lambda y: y.lower())))
