@@ -26,6 +26,8 @@ if __name__ == '__main__':
         anns_converted = {}
         for ann in annotations:
             cat_id = int(ann['category_id'])
+            if cat_id != 1:
+                continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
 
@@ -57,3 +59,4 @@ if __name__ == '__main__':
                                    res for res in converted_results))
         with open(args.dataset + '.txt', 'w+') as f:
             f.write('\n'.join(natsorted(list(image_ids), key=lambda y: y.lower())))
+
