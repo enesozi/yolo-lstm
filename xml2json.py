@@ -31,7 +31,8 @@ def xml2json(xml_root, json_dict):
             for box in child:
                 bbox_dict = {}
                 ### Change this
-                bbox_dict['image_id'] = child.attrib['name'].split('/')[2]
+                frame_num = int(child.attrib['name'].split('/')[-1].split('.')[0][5:])
+                bbox_dict['image_id'] = 'frame%05d.jpg'%frame_num
                 ###
                 xyxy = [int(round(float(box.attrib[x]))) for x in ['xtl', 'ytl', 'xbr', 'ybr']]
                 bbox_dict['bbox'] = xyxy_to_xywh(xyxy)
@@ -64,4 +65,5 @@ json_dict['images'] = [{'id' : f, 'file_name' : f} for f in listdir(image_path) 
 
 with open(json_filename, 'w+') as out:
     json.dump(json_dict, out)
+
 

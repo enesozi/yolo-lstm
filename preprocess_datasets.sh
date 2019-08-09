@@ -1,6 +1,8 @@
 #!/bin/bash
-declare -a train_images=("thermal")
-declare -a valid_images=("thermal")
+declare -a train_images=("thermal" "winter" "rescue895" "rescue896")
+declare -a valid_images=("thermal" "winter" "rescue895" "rescue896")
+declare -A train_limits=( ["thermal"]=3800 ["winter"]=4700 ["rescue895"]=300 ["rescue896"]=30)
+
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
 cfg_file="yolo_v3_spp_lstm.cfg"
@@ -20,13 +22,13 @@ do
 echo $ds
 python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
-i=1
+i=0
 	while IFS= read line
 	do
 		printf "$HOME/Downloads/lstm/${ds}_$line\n" >> "$train_file";
 		cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
 		i=$(($i + 1))
-		if [ $i -eq 4001 ]
+		if [ $i -eq "${train_limits[$ds]}" ]
 		then 
 			break
 		fi
@@ -36,12 +38,10 @@ done
 for ds in "${valid_images[@]}";
 do
 echo $ds
-python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
-python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
 i=0
 	while IFS= read line
 	do
-		if [ $i -gt 3999 ]
+		if [ $i -gt "${train_limits[$ds]}" ]
 		then
 			printf "$HOME/Downloads/lstm/${ds}_$line\n" >> "$valid_file";
 			cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
@@ -60,6 +60,7 @@ cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
 cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
 
 # Download pretrained weight
-#wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
+wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
+
 
 
