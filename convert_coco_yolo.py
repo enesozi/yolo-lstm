@@ -30,6 +30,8 @@ if __name__ == '__main__':
             if not os.path.exists('/home/Downloads/%s/%s'%(args.dataset,ann['image_id'])):
                 continue
             cat_id = int(ann['category_id'])
+	    if cat_id > 1:
+	    	continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
 	    cats[cat_id-1] += 1
