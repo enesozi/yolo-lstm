@@ -25,20 +25,22 @@ if __name__ == '__main__':
 		height = 1088
         image_ids = set()
         anns_converted = {}
-	cats = {0:0,1:0,2:0}
+	cats = {0:0,1:0,2:0,3:0}
         for ann in annotations:
             if not os.path.exists('/home/Downloads/%s/%s'%(args.dataset,ann['image_id'])):
                 continue
             cat_id = int(ann['category_id'])
-	    if cat_id > 1:
-	    	continue
+	    if cat_id == 19:
+	    	cat_id = 4
+	    #if cat_id > 1:
+	    #	continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
 	    cats[cat_id-1] += 1
             # Yolo classes are starting from zero index
             cat_id -= 1
-	    if cat_id == 2:
-		cat_id -= 1
+	    #if cat_id == 2:
+            #	cat_id -= 1
             x_center, y_center = (
                 left + bbox_width / 2, top + bbox_height / 2)
             # darknet expects relative values wrt image width&height
