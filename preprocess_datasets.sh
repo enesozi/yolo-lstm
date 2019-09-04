@@ -1,6 +1,6 @@
 #!/bin/bash
-declare -a train_images=("winter" "thermal" "summer")
-declare -a valid_images=("winter" "thermal" "summer")
+declare -a train_images=("winter" "summer" "thermal")
+declare -a valid_images=("winter" "summer" "thermal")
 declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580)
 
 train_file="lstm_train.txt"
@@ -72,12 +72,12 @@ shuf "$valid_file" > "valid_file_shuffled.txt"
 mv "valid_file_shuffled.txt" "$valid_file"
 
 # Copy necessary files to the correct directories
-#cp "$cfg_file"   "$PWD/darknet/build/darknet/x64/"
-#cp "$train_file" "$PWD/darknet/build/darknet/x64/data/"
-#cp "$valid_file" "$PWD/darknet/build/darknet/x64/data/"
-#cp "$data_file"  "$PWD/darknet/build/darknet/x64/data/"
-#cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
-#cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
+cp "$cfg_file"   "$PWD/darknet/build/darknet/x64/"
+cp "$train_file" "$PWD/darknet/build/darknet/x64/data/"
+cp "$valid_file" "$PWD/darknet/build/darknet/x64/data/"
+cp "$data_file"  "$PWD/darknet/build/darknet/x64/data/"
+cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
+cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
 
 # Download pretrained weight
 #wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"
