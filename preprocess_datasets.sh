@@ -1,11 +1,11 @@
 #!/bin/bash
-declare -a train_images=("thermal" "winter" "rescue895" "rescue896")
-declare -a valid_images=("thermal" "winter" "rescue895" "rescue896")
-declare -A train_limits=( ["thermal"]=3800 ["winter"]=4701 ["rescue895"]=150 ["rescue896"]=-1)
+declare -a train_images=("thermal" "winter" "summer")
+declare -a valid_images=("thermal" "winter" "summer")
+declare -A train_limits=( ["thermal"]=3890 ["summer"]=3790 ["winter"]=4580)
 
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
-cfg_file="yolov3-spp-fine.cfg"
+cfg_file="yolo_v3_spp_lstm.cfg"
 data_file="lstm.data"
 name_file="lstm.names"
 #image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
@@ -20,7 +20,6 @@ mkdir "$image_dir"
 for ds in "${train_images[@]}";
 do
 echo $ds
-python xml2json.py ${ds} "$HOME/Downloads/${ds}_xml"  "$HOME/Downloads/${ds}"
 python convert_coco_yolo.py "${ds}.json" "${ds}" "${image_dir}"
 i=0
 	while IFS= read line
@@ -51,19 +50,19 @@ i=0
 
 done
 
-shuf "$train_file" > "train_file_shuffled.txt"
-mv "train_file_shuffled.txt" "$train_file"
+#shuf "$train_file" > "train_file_shuffled.txt"
+#mv "train_file_shuffled.txt" "$train_file"
 
-shuf "$valid_file" > "valid_file_shuffled.txt"
-mv "valid_file_shuffled.txt" "$valid_file"
+#shuf "$valid_file" > "valid_file_shuffled.txt"
+#mv "valid_file_shuffled.txt" "$valid_file"
 
 # Copy necessary files to the correct directories
-#cp "$cfg_file"   "$PWD/darknet/build/darknet/x64/"
+cp "$cfg_file"   "$PWD/darknet/build/darknet/x64/"
 cp "$train_file" "$PWD/darknet/build/darknet/x64/data/"
 cp "$valid_file" "$PWD/darknet/build/darknet/x64/data/"
-#cp "$data_file"  "$PWD/darknet/build/darknet/x64/data/"
-#cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
-#cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
+cp "$data_file"  "$PWD/darknet/build/darknet/x64/data/"
+cp "$name_file"  "$PWD/darknet/build/darknet/x64/data/"
+cp "run_all_iters.sh" "$PWD/darknet/build/darknet/x64/"
 
 # Download pretrained weight
 #wget https://pjreddie.com/media/files/darknet53.conv.74 -O "$PWD/darknet/build/darknet/x64/darknet53.conv.74"

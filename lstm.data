@@ -1,4 +1,4 @@
-classes = 1
+classes = 4
 train   = data/lstm_train.txt
 valid   = data/lstm_valid.txt
 names   = data/lstm.names
