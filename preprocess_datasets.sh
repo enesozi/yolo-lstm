@@ -1,15 +1,16 @@
 #!/bin/bash
-declare -a train_images=("winter" "summer" "thermal")
-declare -a valid_images=("winter" "summer" "thermal")
+declare -a train_images=("winter")
+declare -a valid_images=("winter")
 declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580)
 
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
-cfg_file="yolov3-spp-fine.cfg"
+cfg_file="yolov3-fine.cfg"
 data_file="lstm.data"
 name_file="lstm.names"
 #image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
 image_dir="$HOME/Downloads/lstm"
+use_sr=false
 
 [ -f "$train_file" ] && rm "$train_file"
 [ -f "$valid_file" ] && rm "$valid_file"
@@ -36,6 +37,7 @@ i=0
 	done <"${ds}.txt"
 done
 
+if [ "$use_sr" = true ] ; then
 for ds in "${train_images[@]}";
 do
 echo "${ds}_SR.txt"
@@ -48,6 +50,7 @@ python prepare_sr_images.py "${ds}_SR.txt" "${ds}"
 		cp "${image_dir}/${ds}_${arr[0]}.txt" "${image_dir}/${ds}_${line}.txt" 2>/dev/null
 	done <"${ds}_SR_out.txt"
 done
+fi
 
 for ds in "${valid_images[@]}";
 do
@@ -62,7 +65,6 @@ i=0
 		fi
 		i=$(($i + 1))
 	done <"${ds}.txt"
-
 done
 
 shuf "$train_file" > "train_file_shuffled.txt"
