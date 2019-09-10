@@ -1,7 +1,7 @@
 #!/bin/bash
-declare -a train_images=("winter")
-declare -a valid_images=("winter")
-declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580)
+declare -a train_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
+declare -a valid_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
+declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580 ["rescue892"]=350 ["rescue895"]=890 ["rescue896"]=100)
 
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
@@ -10,7 +10,7 @@ data_file="lstm.data"
 name_file="lstm.names"
 #image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
 image_dir="$HOME/Downloads/lstm"
-use_sr=false
+use_sr=true
 
 [ -f "$train_file" ] && rm "$train_file"
 [ -f "$valid_file" ] && rm "$valid_file"
@@ -38,7 +38,7 @@ i=0
 done
 
 if [ "$use_sr" = true ] ; then
-for ds in "${train_images[@]}";
+for ds in "${train_images[@]:0:3}";
 do
 echo "${ds}_SR.txt"
 python prepare_sr_images.py "${ds}_SR.txt" "${ds}"
@@ -55,6 +55,8 @@ fi
 for ds in "${valid_images[@]}";
 do
 echo $ds
+rm -rf "$HOME/Downloads/${ds}_val_set/"
+mkdir "$HOME/Downloads/${ds}_val_set/"
 i=0
 	while IFS= read line
 	do
@@ -62,6 +64,7 @@ i=0
 		then
 			printf "$HOME/Downloads/lstm/${ds}_$line\n" >> "$valid_file";
 			cp "$HOME/Downloads/${ds}/${line}" "${image_dir}/${ds}_${line}" 2>/dev/null
+			cp "$HOME/Downloads/${ds}/${line}" "$HOME/Downloads/${ds}_val_set/${ds}_${line}" 2>/dev/null
 		fi
 		i=$(($i + 1))
 	done <"${ds}.txt"

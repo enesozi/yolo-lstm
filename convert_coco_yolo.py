@@ -21,25 +21,28 @@ if __name__ == '__main__':
         annotations = data['annotations']
         width = 1920
         height = 1208
-	if 'rescue' in args.dataset:
-		height = 1088
+        if 'rescue' in args.dataset:
+            height = 1088
         image_ids = set()
         anns_converted = {}
-	cats = {0:0,1:0,2:0,3:0}
+        cats = {0: 0, 1: 0, 2: 0, 3: 0}
         for ann in annotations:
-            if not os.path.exists('/home/Downloads/%s/%s'%(args.dataset,ann['image_id'])):
+            img_path = '/home/Downloads/%s/%s' % (
+                args.dataset, ann['image_id'])
+            if not os.path.exists(img_path):
+                #print(img_path)
                 continue
             cat_id = int(ann['category_id'])
 	    if cat_id == 19:
 	    	cat_id = 4
-	    #if cat_id > 1:
-	    #	continue
+            # if cat_id > 1:
+            #	continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
-	    cats[cat_id-1] += 1
+            cats[cat_id - 1] += 1
             # Yolo classes are starting from zero index
             cat_id -= 1
-	    #if cat_id == 2:
+            # if cat_id == 2:
             #	cat_id -= 1
             x_center, y_center = (
                 left + bbox_width / 2, top + bbox_height / 2)
@@ -68,4 +71,4 @@ if __name__ == '__main__':
         with open(args.dataset + '.txt', 'w+') as f:
             f.write('\n'.join(natsorted(list(image_ids), key=lambda y: y.lower())))
 
-	print(cats)
+        print(cats)
