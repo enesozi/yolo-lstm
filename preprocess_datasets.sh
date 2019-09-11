@@ -1,7 +1,7 @@
 #!/bin/bash
-declare -a train_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
-declare -a valid_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
-declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580 ["rescue892"]=350 ["rescue895"]=890 ["rescue896"]=100)
+declare -a train_images=("summer" "winter" "thermal")
+declare -a valid_images=("summer" "winter" "thermal")
+declare -A train_limits=( ["thermal"]=590 ["summer"]=745 ["winter"]=745 ["rescue892"]=350 ["rescue895"]=890 ["rescue896"]=100)
 
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
@@ -10,7 +10,7 @@ data_file="lstm.data"
 name_file="lstm.names"
 #image_dir="$PWD/darknet/build/darknet/x64/data/lstm"
 image_dir="$HOME/Downloads/lstm"
-use_sr=true
+use_sr=false
 
 [ -f "$train_file" ] && rm "$train_file"
 [ -f "$valid_file" ] && rm "$valid_file"

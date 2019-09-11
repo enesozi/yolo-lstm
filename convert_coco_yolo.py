@@ -5,6 +5,7 @@ import os
 import sys
 import json
 from natsort import natsorted
+import math
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -35,8 +36,8 @@ if __name__ == '__main__':
             cat_id = int(ann['category_id'])
 	    if cat_id == 19:
 	    	cat_id = 4
-            # if cat_id > 1:
-            #	continue
+            if cat_id > 1:
+            	continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
             cats[cat_id - 1] += 1
@@ -60,13 +61,13 @@ if __name__ == '__main__':
                 anns_converted[image_id]['anns'] = []
 
             anns_converted[image_id]['anns'].append(
-                (cat_id, x_rel, y_rel, w_rel, h_rel))
+                (cat_id, x_rel, y_rel, w_rel, h_rel,float(ann['distance'])))
 
         for image_id in anns_converted:
             file_name = anns_converted[image_id]['file']
             converted_results = anns_converted[image_id]['anns']
             with open(os.path.join(args.output_path, file_name), 'w+') as fp:
-                fp.write('\n'.join('%d %.6f %.6f %.6f %.6f' %
+                fp.write('\n'.join('%d %.6f %.6f %.6f %.6f %.6f' %
                                    res for res in converted_results))
         with open(args.dataset + '.txt', 'w+') as f:
             f.write('\n'.join(natsorted(list(image_ids), key=lambda y: y.lower())))
