@@ -1,7 +1,7 @@
 #!/bin/bash
-declare -a train_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
-declare -a valid_images=("summer" "winter" "thermal" "rescue892" "rescue895" "rescue896")
-declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580 ["rescue892"]=350 ["rescue895"]=890 ["rescue896"]=100)
+declare -a train_images=("thermal" "winter" "summer" "rescue892" "rescue895" "rescue896" "demo")
+declare -a valid_images=("thermal" "winter" "summer" "rescue892" "rescue895" "rescue896" "demo")
+declare -A train_limits=( ["thermal"]=3892 ["summer"]=3792 ["winter"]=4580 ["rescue892"]=350 ["rescue895"]=880 ["rescue896"]=100 ["demo"]=1180)
 
 train_file="lstm_train.txt"
 valid_file="lstm_valid.txt"
@@ -38,7 +38,7 @@ i=0
 done
 
 if [ "$use_sr" = true ] ; then
-for ds in "${train_images[@]:0:3}";
+for ds in "${train_images[@]}";
 do
 echo "${ds}_SR.txt"
 python prepare_sr_images.py "${ds}_SR.txt" "${ds}"
@@ -47,7 +47,8 @@ python prepare_sr_images.py "${ds}_SR.txt" "${ds}"
 	        printf "$HOME/Downloads/lstm/${ds}_$line.jpg\n" >> "$train_file";
 		cp "$HOME/Downloads/${ds}_style/${line}.jpg" "${image_dir}/${ds}_${line}.jpg" 2>/dev/null
 		arr=($(echo $line | tr "_" "\n"))
-		cp "${image_dir}/${ds}_${arr[0]}.txt" "${image_dir}/${ds}_${line}.txt" 2>/dev/null
+		if [[ $ds == *res* ]]; then arr[0]=$(IFS=_ eval 'echo "${arr[*]:0:3}"'); fi
+		cp "${image_dir}/${ds}_${arr[0]}.txt" "${image_dir}/${ds}_${line}.txt" #2>/dev/null
 	done <"${ds}_SR_out.txt"
 done
 fi

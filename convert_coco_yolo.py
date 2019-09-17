@@ -35,14 +35,14 @@ if __name__ == '__main__':
             cat_id = int(ann['category_id'])
 	    if cat_id == 19:
 	    	cat_id = 4
-            # if cat_id > 1:
+            #if cat_id > 1:
             #	continue
             left, top, bbox_width, bbox_height = map(
                 float, ann['bbox'])
             cats[cat_id - 1] += 1
             # Yolo classes are starting from zero index
             cat_id -= 1
-            # if cat_id == 2:
+            #if cat_id == 2:
             #	cat_id -= 1
             x_center, y_center = (
                 left + bbox_width / 2, top + bbox_height / 2)
